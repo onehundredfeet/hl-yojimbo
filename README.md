@@ -29,6 +29,8 @@ This tells haxe to look for the library 'hl-yojimbo' in the directory 'hl-yojimb
 2.2 Clone yojimbo c++ sources in some clean directory
 ```sh
 git clone https://github.com/networkprotocol/yojimbo.git
+cd yojimbo
+git submodule update --init --recursive
 ```
    The content of /src dir will be used in the next step.  
     Note: It is recommended to clone some release tag, or at least make sure that the current cloned commit is stable.  
