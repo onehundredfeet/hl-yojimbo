@@ -26,14 +26,12 @@ haxelib dev hl-yojimbo hl-yojimbo
 
 This tells haxe to look for the library 'hl-yojimbo' in the directory 'hl-yojimbo'.  The 'dev' keyword tells haxe that the library is local and will be directly referenced instead of being installed to the library cache.
 
-2.2 Clone yojimbo c++ sources in some clean directory
+2.2 Clone yojimbo c++ sources as a submodule in hl-yojimbo
+From the hl-yojimbo root, run
+
 ```sh
-git clone https://github.com/networkprotocol/yojimbo.git
-cd yojimbo
 git submodule update --init --recursive
 ```
-   The content of /src dir will be used in the next step.  
-    Note: It is recommended to clone some release tag, or at least make sure that the current cloned commit is stable.  
 
 2.3 Generate the binding cpp file.
 
@@ -49,14 +47,14 @@ This will generate src/yojimbo.cpp from yojimbo/yojimbo.idl
 
 2.4 Generate cmake and build.  
 **Note: At this step there are differences between platforms**  
-    Create new dir : HL-BULLET-ROOT/build  
-    Open new terminal in the directory HL-BULLET-ROOT/build and run:  
+    Create new dir : HL-YOJIMBO-ROOT/build  
+    Open new terminal in the directory HL-YOJIMBO-ROOT/build and run:  
 
 **For linux:**  
 ```sh
     cmake ..
-      -DBULLET_SRC_DIR="<path-to-bullet3>/src" # This is the /src from step 2
-      -DHL_INCLUDE_DIR="<path-to-hashlink>/src" # Path to where hashlink headers (hl.h, ...) are located. Usually under ...hashlink-x.xx/src 
+      -DYOJIMBO_SRC_DIR="ext/yojimbo" # This is the /src from step 2
+      -DHL_INCLUDE_DIR="<path-to-hashlink headers>" # Path to where hashlink headers (hl.h, ...) are located. Usually under ...hashlink-x.xx/src 
       -DHL_LIB_DIR="<path-to-hashlink>" # Path to where hashlink binaries (libhl.so, ...) are located. Usually ...hashlink-x.xx
       -HDLL_DESTINATION="final/install/destination" #The path of all *hdll binaries, usually this is 'usr/lib' or 'usr/local/lib'
 ```
@@ -66,17 +64,20 @@ This will generate src/yojimbo.cpp from yojimbo/yojimbo.idl
 ```sh
     make install
 ```
-    
+
+DEVELOPER NOTE: YOJIMBO WILL REQUIRE MULTIPLE SOURCE DIRS.
+They have submodules netcode.io reliable.io
+
 specific cmake command example on linux:  
 ```sh
-    cmake .. -DBULLET_SRC_DIR="/example/bullet3/src" -DHL_INCLUDE_DIR="/example/hashlink/hashlink-1.11/src" -DHL_LIB_DIR="/example/hashlink/hashlink-1.11" -DHDLL_DESTINATION="/usr/lib"
+    cmake .. -DYOJIMBO_SRC_DIR="ext/yojimbo" -DHL_INCLUDE_DIR="/usr/local/include" -DHL_LIB_DIR="/usr/local/lib" -DHDLL_DESTINATION="/usr/local/lib"
    ```
 
 **For windows:**  
 
 ```sh
     cmake .. -A x64 -G "Visual Studio 15 2017" 
-    -DBULLET_SRC_DIR="<path-to-bullet3>/src" # This is the /src from step 2
+    -DYOJIMBO_SRC_DIR="<path-to-bullet3>/src" # This is the /src from step 2
       -DHL_INCLUDE_DIR="<path-to-hashlink>/include"
       -DHL_LIB_DIR="<path-to-hashlink>"  # Path to where hashlink binaries (libhl.lib, ...) are located
       -HDLL_DESTINATION="final/install/destination" # Usually <path-to-hashlink>
@@ -89,7 +90,7 @@ specific cmake command example on linux:
 * Note: Specify the hashlink directories on your system.  On Mac, brew defaults /usr/local (lib/include).
 ```sh
     cmake ..  -GNinja 
-    -DBULLET_SRC_DIR="<BulletDir>/src" 
+    -DYOJIMBO_SRC_DIR="ext/yojimbo" 
     -DHL_LIB_DIR="/usr/local/lib" 
     -DHL_INCLUDE_DIR="/usr/local/include" 
     -DHDLL_DESTINATION="/usr/local/lib"
