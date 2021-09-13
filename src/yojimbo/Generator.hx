@@ -14,7 +14,7 @@ class Generator {
 ";
 
 
-	static var options = { idlFile : "yojimbo/yojimbo.idl", nativeLib : "yojimbo", outputDir : "src", includeCode : INCLUDE, autoGC : true };
+	static var options = { idlFile : "src/yojimbo.idl", nativeLib : "yojimbo", outputDir : "src", includeCode : INCLUDE, autoGC : true };
 
 	public static function generateCpp() {
 		webidl.Generate.generateCpp(options);
