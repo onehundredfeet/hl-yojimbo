@@ -8,7 +8,7 @@ THIS PROJECT IS IN PROGRESS - DO NOT CLONE, IT DOES NOT WORK
 
 ### 1. Prerequisites:
 1.1. Install haxe: (: https://haxe.org/download)  
-1.2. Install hashlink: (For linux: http://www.unexpected-vortices.com/haxe/getting-started-hl.html )  
+1.2. Install hashlink: (https://hashlink.haxe.org )  
 1.3. Install heaps: (For linux: https://heaps.io/documentation/installation.html )  
 1.4. Install the modified webidl from git:   
 ```sh
