@@ -1,10 +1,10 @@
 {
 	"name" : "hl-yojimbo",
-	"url" : "https://github.com/HeapsIO/bullet",
+	"url" : "https://github.com/onehundredfeet/hl-yojimbo",
 	"license" : "MIT",
 	"contributors" : ["onehundredfeet"],
 	"description" : "Yojimbo support for Haxe HL/JS.",
-	"version" : "1.0.0",
+	"version" : "0.1.0",
 	"releasenote" : "",
-	"dependencies": { "webidl" : "" }
+	"dependencies": { "hl-idl" : "" }
 }
