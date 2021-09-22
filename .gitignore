@@ -1,1 +1,5 @@
 build
+src/yojimbo.cpp
+.DS_Store
+.vscode/settings.json
+bin/test.hl
