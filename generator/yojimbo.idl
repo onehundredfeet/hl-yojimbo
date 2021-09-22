@@ -1,6 +1,6 @@
 // Web IDL code goes here
 
-enum LogLevel {
+[Internal="int"] enum LogLevel {
     "YOJIMBO_LOG_LEVEL_INFO"
 };
 
