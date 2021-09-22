@@ -1,0 +1,35 @@
+// Web IDL code goes here
+
+enum LogLevel {
+    "YOJIMBO_LOG_LEVEL_INFO"
+};
+
+[Internal="yojimbo::ClientServerConfig"]
+interface ClientServerConfig 
+{
+    void ClientServerConfig();
+
+    //actually an int64
+    attribute int protocolId;                                    ///< Clients can only connect to servers with the same protocol id. Use this for versioning.
+    attribute int timeout;                                            ///< Timeout value in seconds. Set to negative value to disable timeouts (for debugging only).
+    attribute int clientMemory;                                       ///< Memory allocated inside Client for packets, messages and stream allocations (bytes)
+    attribute int serverGlobalMemory;                                 ///< Memory allocated inside Server for global connection request and challenge response packets (bytes)
+    attribute int serverPerClientMemory;                              ///< Memory allocated inside Server for packets, messages and stream allocations per-client (bytes)
+    attribute bool networkSimulator;                                  ///< If true then a network simulator is created for simulating latency, jitter, packet loss and duplicates.
+    attribute int maxSimulatorPackets;                                ///< Maximum number of packets that can be stored in the network simulator. Additional packets are dropped.
+    attribute int fragmentPacketsAbove;                               ///< Packets above this size (bytes) are split apart into fragments and reassembled on the other side.
+    attribute int packetFragmentSize;                                 ///< Size of each packet fragment (bytes).
+    attribute int maxPacketFragments;                                 ///< Maximum number of fragments a packet can be split up into.
+    attribute int packetReassemblyBufferSize;                         ///< Number of packet entries in the fragmentation reassembly buffer.
+    attribute int ackedPacketsBufferSize;                             ///< Number of packet entries in the acked packet buffer. Consider your packet send rate and aim to have at least a few seconds worth of entries.
+    attribute int receivedPacketsBufferSize;                          ///< Number of packet entries in the received packet sequence buffer. Consider your packet send rate and aim to have at least a few seconds worth of entries.   
+};
+
+
+[NoDelete]
+interface Yojimbo {
+    [Static, Internal="InitializeYojimbo"] void initialize();
+    [Static, Internal="ShutdownYojimbo"] void shutdown();
+    [Static, Internal="yojimbo_log_level"] void logLevel(LogLevel level);
+};
+	

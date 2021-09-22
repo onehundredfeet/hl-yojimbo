@@ -11,10 +11,11 @@ class Generator {
 #pragma warning(disable:4316)
 #endif
 
+#include <yojimbo/yojimbo.h>
 ";
 
 
-	static var options = { idlFile : "src/yojimbo.idl", nativeLib : "yojimbo", outputDir : "src", includeCode : INCLUDE, autoGC : true };
+	static var options = { idlFile : "generator/yojimbo.idl", nativeLib : "yojimbo", outputDir : "src", includeCode : INCLUDE, autoGC : true };
 
 	public static function generateCpp() {
 		webidl.Generate.generateCpp(options);

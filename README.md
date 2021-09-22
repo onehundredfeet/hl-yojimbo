@@ -89,7 +89,7 @@ specific cmake command example on linux:
 **For UNIX (Mac / Linux):**  
 * Note: Specify the hashlink directories on your system.  On Mac, brew defaults /usr/local (lib/include).
 ```sh
-    cmake ..  -GNinja -DYOJIMBO_SRC_DIR="ext/yojimbo" -DHL_LIB_DIR="/usr/local/lib" -DHL_INCLUDE_DIR="/usr/local/include" -DHDLL_DESTINATION="/usr/local/lib"
+    cmake ..  -GNinja -DYOJIMBO_SRC_DIR="ext/yojimbo" -DYOJIMBO_INC_DIR="ext" -DHL_LIB_DIR="/usr/local/lib" -DHL_INCLUDE_DIR="/usr/local/include" -DHDLL_DESTINATION="/usr/local/lib"
 ```
 ```sh
     make
