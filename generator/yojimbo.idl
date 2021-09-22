@@ -4,6 +4,39 @@ enum LogLevel {
     "YOJIMBO_LOG_LEVEL_INFO"
 };
 
+
+//        Server server( GetDefaultAllocator(), privateKey, Address( "127.0.0.1", ServerPort ), config, adapter, time );
+
+[Internal="yojimbo::Address"]
+interface Address  {
+    void Address( String host, int port );
+
+    [Internal="addressToString", CObject] String toString();
+};
+
+[Internal="yojimbo::Allocator"]
+interface Allocator  {
+    [Internal="yojimbo::GetDefaultAllocator", Static, Ref, Const]  Allocator getDefault();
+};
+
+[Internal="HashlinkAdapter"]
+interface Adapter  {
+    void Adapter(  );
+};
+
+
+
+[Internal="yojimbo::Server"]
+interface Server  {
+    void Server( [Ref] Allocator allocator, [Cast="unsigned char *"] String privateKey, [Ref] Address address, [Ref] ClientServerConfig config, [Ref] Adapter adapter, double time );
+    [Internal="Start"]   void start( int maxClients );
+
+    [Internal="GetAddress", Const, Ref] Address getAddress();
+    [Internal="Stop"]   void stop();
+
+
+};
+
 [Internal="yojimbo::ClientServerConfig"]
 interface ClientServerConfig 
 {
@@ -31,5 +64,7 @@ interface Yojimbo {
     [Static, Internal="InitializeYojimbo"] void initialize();
     [Static, Internal="ShutdownYojimbo"] void shutdown();
     [Static, Internal="yojimbo_log_level"] void logLevel(LogLevel level);
+    [Internal="hl_cache_string_type", Static] void cacheStringType( [HString] String test );
+
 };
 	

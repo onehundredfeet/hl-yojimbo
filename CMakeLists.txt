@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
-
+project(yojimbo)
 add_library(yojimbo.hdll SHARED
 #Input C++ files go here
 ${YOJIMBO_SRC_DIR}/yojimbo.cpp
 
 src/yojimbo.cpp
+src/YojimboHelpers.cpp
+src/hl_string_helpers.cpp
 ext/yojimbo/netcode.io/netcode.c
 ext/yojimbo/reliable.io/reliable.c
 ext/yojimbo/tlsf/tlsf.c

@@ -12,6 +12,9 @@ class Generator {
 #endif
 
 #include <yojimbo/yojimbo.h>
+#include \"HashlinkAdapter.h\"
+#include \"YojimboHelpers.h\"
+#include \"hl_string_helpers.h\"
 ";
 
 
