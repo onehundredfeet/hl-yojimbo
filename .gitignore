@@ -4,3 +4,4 @@ src/yojimbo.cpp
 .vscode/settings.json
 bin/test.hl
 bin/server.hl
+bin/client.hl

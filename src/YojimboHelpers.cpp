@@ -46,3 +46,14 @@ vdynamic * addressToDynamic( const yojimbo::Address *address) {
     const char *str = address->ToString(buffer, 256);
     return utf8_to_dynamic(str);
 }
+
+
+vbyte *HxGetConnectToken(yojimbo::Matcher *matcher) {
+
+    unsigned char buffer[yojimbo::ConnectTokenBytes];
+
+    matcher->GetConnectToken(buffer);
+
+
+    return hl_copy_bytes(buffer, yojimbo::ConnectTokenBytes);
+}

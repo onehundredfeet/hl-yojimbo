@@ -11,4 +11,6 @@ void cacheStringType( vstring *str);
 vstring * addressToString( const yojimbo::Address *address);
 vdynamic * addressToDynamic( const yojimbo::Address *address);
 
+vbyte *HxGetConnectToken(yojimbo::Matcher *matcher);
+
 #endif

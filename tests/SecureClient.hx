@@ -9,6 +9,8 @@ class SecureClient {
 
     public static function main()  {
 
+        Yojimbo.initialize();
+
         var allocator = Allocator.getDefault();
 
         var matcher = new Matcher(  allocator );
@@ -16,21 +18,35 @@ class SecureClient {
         if ( !matcher.initialize() )
         {
             trace( "error: failed to initialize matcher" );
-            return 1;
+            return ;
         }
     
+
         trace( "requesting match from https://localhost:8080" );
-    
+
+        var clientId =  (Sys.args().length > 0) ? Std.parseInt(Sys.args()[0]) : 12345;
+
         matcher.requestMatch( ProtocolId, clientId, false );
     
         if ( matcher.getMatchStatus() == MatchStatus.MATCH_FAILED )
         {
-            printf( "\nRequest match failed. Is the matcher running? Please run \"premake5 matcher\" before you connect a secure client\n" );
-            return 1;
+            trace( "\nRequest match failed. Is the matcher running?\n" );
+            return ;
+        } else {
+            trace ("Match status " + matcher.getMatchStatus());
         }
 
+        var ct = matcher.getConnectToken();
+    
+        final time = 100.0;
+    
+        var config = new ClientServerConfig();
+        config.protocolId = ProtocolId;
 
-    }
+        Yojimbo.shutdown();
+        
+
+   }
 }
 /*
 #include "yojimbo.h"

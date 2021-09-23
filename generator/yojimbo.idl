@@ -76,6 +76,7 @@ interface Matcher {
     [Internal="RequestMatch"] void requestMatch(int protocolID, int clientID, bool verifyCertificate);
     [Internal="GetMatchStatus"] MatchStatus getMatchStatus();
 
+    [Internal="HxGetConnectToken", CObject] bytes getConnectToken();
 };
 
 [NoDelete]
