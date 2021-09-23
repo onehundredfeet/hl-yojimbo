@@ -1,0 +1,4 @@
+-lib hl-idl
+-lib tink_macro
+--class-path tests
+--class-path src

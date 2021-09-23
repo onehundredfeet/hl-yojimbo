@@ -1,6 +1,3 @@
--lib hl-idl
--lib tink_macro
---class-path tests
---class-path src
--hl bin/test.hl
+compile-common.hxml
+-hl bin/server.hl
 --main SecureServer

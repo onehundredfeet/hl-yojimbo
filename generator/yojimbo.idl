@@ -24,8 +24,6 @@ interface Adapter  {
     void Adapter(  );
 };
 
-
-
 [Internal="yojimbo::Server"]
 interface Server  {
     void Server( [Ref] Allocator allocator, [Cast="unsigned char *"] String privateKey, [Ref] Address address, [Ref] ClientServerConfig config, [Ref] Adapter adapter, double time );
@@ -33,7 +31,10 @@ interface Server  {
 
     [Internal="GetAddress", Const, Ref] Address getAddress();
     [Internal="Stop"]   void stop();
-
+    [Internal="SendPackets"]   void sendPackets();
+    [Internal="ReceivePackets"]   void receivePackets();
+    [Internal="AdvanceTime"]   void advanceTime(double time);
+    [Internal="IsRunning"] bool isRunning();
 
 };
 
@@ -58,6 +59,24 @@ interface ClientServerConfig
     attribute int receivedPacketsBufferSize;                          ///< Number of packet entries in the received packet sequence buffer. Consider your packet send rate and aim to have at least a few seconds worth of entries.   
 };
 
+enum MatchStatus
+{
+    "MATCH_IDLE",                 ///< The matcher is idle.
+    "MATCH_BUSY",                 ///< The matcher is requesting a match.
+    "MATCH_READY",                ///< The match response is ready to read with Matcher::GetConnectToken.
+    "MATCH_FAILED"                ///< The matcher failed to find a match.
+};
+
+
+[Internal="yojimbo::Matcher"]
+interface Matcher {
+    void Matcher (  [Ref] Allocator allocator );
+    
+    [Internal="Initialize"] bool initialize();
+    [Internal="RequestMatch"] void requestMatch(int protocolID, int clientID, bool verifyCertificate);
+    [Internal="GetMatchStatus"] MatchStatus getMatchStatus();
+
+};
 
 [NoDelete]
 interface Yojimbo {
@@ -65,6 +84,6 @@ interface Yojimbo {
     [Static, Internal="ShutdownYojimbo"] void shutdown();
     [Static, Internal="yojimbo_log_level"] void logLevel(LogLevel level);
     [Internal="hl_cache_string_type", Static] void cacheStringType( [HString] String test );
-
+    [Static, Internal="yojimbo_sleep"] void sleep(double time);
 };
 	
