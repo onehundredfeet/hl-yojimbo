@@ -29,11 +29,11 @@ ${YOJIMBO_SRC_DIR}/reliable.io
 ${HL_INCLUDE_DIR}
 
 )
-target_include_directories(yojimbo.hdll BEFORE PRIVATE /usr/local/Cellar/mbedtls@2/2.27.0/include )
+#target_include_directories(yojimbo.hdll BEFORE PRIVATE )
 
 link_directories(yojimbo.hdll
 ${HL_LIB_DIR}
-/usr/local/Cellar/mbedtls@2/2.27.0/lib
+/usr/local/include
 )
 
 find_library(LIBHL NAMES hl 
@@ -42,14 +42,12 @@ find_library(LIBHL NAMES hl
 find_library(LIBSODIUM NAMES sodium)
 
 find_library(LIBMBEDTLS NAMES mbedtls 
-             HINTS /usr/local/Cellar/mbedtls@2/2.27.0/lib )
+HINTS /usr/local/lib )
 
 find_library(LIBMBEDCRYPTO NAMES mbedcrypto 
-             HINTS /usr/local/Cellar/mbedtls@2/2.27.0/lib )
-
+             HINTS /usr/local/lib )
 find_library(LIBMBEDX509 NAMES mbedx509 
-             HINTS /usr/local/Cellar/mbedtls@2/2.27.0/lib )
-
+             HINTS /usr/local/lib )
              
              
 target_link_libraries(yojimbo.hdll ${LIBHL} ${LIBMBEDTLS} ${LIBMBEDCRYPTO} ${LIBMBEDX509} ${LIBSODIUM})

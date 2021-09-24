@@ -1,32 +1,60 @@
 
 package;
 
+import hl.Ref;
+import haxe.crypto.Base64;
+import sys.io.File;
 import hl.Gc;
 import yojimbo.Native;
 
 class SecureClient {
     static final  ProtocolId = 0x11223344; //.make(,0x556677);
+    static final ClientPort = 30000;
+    static final ServerPort = 40000;
+
+    static final cert_file = "server.pem";
 
     public static function main()  {
+        Yojimbo.cacheStringType("");
 
         Yojimbo.initialize();
 
         var allocator = Allocator.getDefault();
-
+    
         var matcher = new Matcher(  allocator );
 
-        if ( !matcher.initialize() )
+        var cert = File.getBytes(cert_file);
+
+        var certStr = File.getContent(cert_file);
+        var r = ~/(-----BEGIN CERTIFICATE-----)|(-----END CERTIFICATE-----)|[\r\n]/g;
+        var cleanCertStr = r.replace(certStr, "");
+
+        trace(cleanCertStr);
+
+        var certBytes = Base64.decode(cleanCertStr);
+
+//        .replace("-----BEGIN PUBLIC KEY-----", "")
+  //      .replaceAll(System.lineSeparator(), "")
+    //    .replace("-----END PUBLIC KEY-----", "");
+  
+      //byte[] encoded = Base64.decodeBase64(publicKeyPEM);
+
+
+        if (certBytes == null) {
+            trace( "error: failed to loading file " + cert_file );
+            return ;
+        }
+        if ( !matcher.initialize(certBytes, certBytes.length) )
         {
             trace( "error: failed to initialize matcher" );
             return ;
         }
     
-
-        trace( "requesting match from https://localhost:8080" );
+        trace( "requesting match from https://localhost:443" );
 
         var clientId =  (Sys.args().length > 0) ? Std.parseInt(Sys.args()[0]) : 12345;
 
-        matcher.requestMatch( ProtocolId, clientId, false );
+        matcher.requestMatch( "localhost", 443, ProtocolId, clientId, false );
     
         if ( matcher.getMatchStatus() == MatchStatus.MATCH_FAILED )
         {
@@ -36,12 +64,70 @@ class SecureClient {
             trace ("Match status " + matcher.getMatchStatus());
         }
 
-        var ct = matcher.getConnectToken();
-    
+        var ctlen = -1;
+        var connectToken = matcher.getConnectToken( ctlen );
+        trace ("Got connection token " + ctlen);
+
+        var hbytes = connectToken.toBytes(ctlen );
+
+
+        trace ("Got connection token " + hbytes);
+        trace ("Got connection token length " + ctlen);
+
         final time = 100.0;
     
         var config = new ClientServerConfig();
         config.protocolId = ProtocolId;
+
+
+        var adapter = new Adapter();
+
+        var address = new Address("0.0.0.0", ClientPort);
+
+        var client = new Client(allocator, address, config, adapter, time);
+
+        var serverAddress = new Address( "127.0.0.1", ServerPort );
+        
+        trace ("Connecting to  " + serverAddress.toString());
+
+        client.connect( clientId, connectToken );
+
+        trace ("Connected? to  ");
+        if ( client.isDisconnected() )
+            return;
+
+        var clientAddress = client.getAddress().toString();
+
+        trace("Client address is " + clientAddress);
+        
+        final deltaTime = 0.1;
+        
+
+        while ( true )
+        {
+            client.sendPackets();
+    
+            client.receivePackets();
+    
+            if ( client.isDisconnected() ) {
+                trace ("Disconnected post loop");
+                break;
+            }
+            
+            time += deltaTime;
+    
+            client.advanceTime( time );
+    
+            if ( client.hasConnectionFailed() )
+                break;
+    
+            Yojimbo.sleep( deltaTime );    
+
+        }
+    
+        trace ("Disconnecting");
+        client.disconnect();
+        trace ("Shutting down");
 
         Yojimbo.shutdown();
         

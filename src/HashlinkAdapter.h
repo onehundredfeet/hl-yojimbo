@@ -140,6 +140,11 @@ class HashlinkAdapter : public Adapter
 {
 public:
 
+    virtual void OnServerClientConnected( int clientIndex )
+    {
+        printf("Client connected %d\n", clientIndex);
+    }
+
     MessageFactory * CreateMessageFactory( Allocator & allocator )
     {
         return YOJIMBO_NEW( allocator, TestMessageFactory, allocator );

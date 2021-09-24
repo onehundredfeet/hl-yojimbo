@@ -3,16 +3,16 @@ package;
 
 import hl.Gc;
 import yojimbo.Native;
+import haxe.io.UInt8Array;
 
 class SecureServer {
 
-    // Needs to be a byte array
-    static var privateKey = "\x60";
-
-    static var privateKeyArray : Array<Int> = [ 0x60, 0x6a, 0xbe, 0x6e, 0xc9, 0x19, 0x10, 0xea, 
+    static var privateKeyArrayInt : Array<Int> = [ 0x60, 0x6a, 0xbe, 0x6e, 0xc9, 0x19, 0x10, 0xea, 
         0x9a, 0x65, 0x62, 0xf6, 0x6f, 0x2b, 0x30, 0xe4, 
         0x43, 0x71, 0xd6, 0x2c, 0xd1, 0x99, 0x27, 0x26,
         0x6b, 0x3c, 0x60, 0xf4, 0xb7, 0x15, 0xab, 0xa1 ];
+    
+    static var privateKey:haxe.io.Bytes = UInt8Array.fromArray(privateKeyArrayInt).view.buffer;
 
     // should be an int64
     static final  ProtocolId = 0x11223344; //.make(,0x556677);
@@ -71,7 +71,7 @@ class SecureServer {
 
         Yojimbo.initialize();
 
-        Yojimbo.logLevel(LogLevel.YOJIMBO_LOG_LEVEL_INFO);
+        Yojimbo.logLevel(LogLevel.YOJIMBO_LOG_LEVEL_DEBUG);
 
         var allocator = Allocator.getDefault();
   

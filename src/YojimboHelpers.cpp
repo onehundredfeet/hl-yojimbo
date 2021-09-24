@@ -48,12 +48,15 @@ vdynamic * addressToDynamic( const yojimbo::Address *address) {
 }
 
 
-vbyte *HxGetConnectToken(yojimbo::Matcher *matcher) {
+vbyte *HxGetConnectToken(yojimbo::Matcher *matcher, int *length) {
 
     unsigned char buffer[yojimbo::ConnectTokenBytes];
 
     matcher->GetConnectToken(buffer);
 
+    *length = yojimbo::ConnectTokenBytes;
 
+    printf("Connection token length %p : %d\n", length, *length);
+    
     return hl_copy_bytes(buffer, yojimbo::ConnectTokenBytes);
 }

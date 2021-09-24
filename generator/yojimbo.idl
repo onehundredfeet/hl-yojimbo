@@ -1,7 +1,9 @@
 // Web IDL code goes here
 
 [Internal="int"] enum LogLevel {
-    "YOJIMBO_LOG_LEVEL_INFO"
+    "YOJIMBO_LOG_LEVEL_INFO",
+    "YOJIMBO_LOG_LEVEL_DEBUG"
+
 };
 
 
@@ -26,7 +28,7 @@ interface Adapter  {
 
 [Internal="yojimbo::Server"]
 interface Server  {
-    void Server( [Ref] Allocator allocator, [Cast="unsigned char *"] String privateKey, [Ref] Address address, [Ref] ClientServerConfig config, [Ref] Adapter adapter, double time );
+    void Server( [Ref] Allocator allocator, bytes privateKey, [Ref] Address address, [Ref] ClientServerConfig config, [Ref] Adapter adapter, double time );
     [Internal="Start"]   void start( int maxClients );
 
     [Internal="GetAddress", Const, Ref] Address getAddress();
@@ -59,6 +61,23 @@ interface ClientServerConfig
     attribute int receivedPacketsBufferSize;                          ///< Number of packet entries in the received packet sequence buffer. Consider your packet send rate and aim to have at least a few seconds worth of entries.   
 };
 
+[Internal="yojimbo::Client"]
+interface Client {
+    void Client([Ref] Allocator allocator,  [Ref] Address address, [Ref] ClientServerConfig config, [Ref] Adapter adapter, double time );
+    
+    [Internal="Connect"] void connect(int clientID, bytes connectToken );
+    [Internal="Disconnect"] void disconnect();
+    [Internal="IsDisconnected"] bool isDisconnected();
+    [Internal="IsConnected"] bool isConnected();
+    [Internal="GetAddress", Const, Ref] Address getAddress();
+    [Internal="SendPackets"]   void sendPackets();
+    [Internal="ReceivePackets"]   void receivePackets();
+    [Internal="AdvanceTime"]   void advanceTime(double time);
+    [Internal="ConnectionFailed"] bool hasConnectionFailed();
+
+
+};
+
 enum MatchStatus
 {
     "MATCH_IDLE",                 ///< The matcher is idle.
@@ -72,11 +91,11 @@ enum MatchStatus
 interface Matcher {
     void Matcher (  [Ref] Allocator allocator );
     
-    [Internal="Initialize"] bool initialize();
-    [Internal="RequestMatch"] void requestMatch(int protocolID, int clientID, bool verifyCertificate);
+    [Internal="Initialize"] bool initialize(bytes cert, int cert_len );
+    [Internal="RequestMatch"] void requestMatch(String server, int port, int protocolID, int clientID, bool verifyCertificate);
     [Internal="GetMatchStatus"] MatchStatus getMatchStatus();
 
-    [Internal="HxGetConnectToken", CObject] bytes getConnectToken();
+    [Internal="HxGetConnectToken", CObject] bytes getConnectToken( [Out] int length);
 };
 
 [NoDelete]
