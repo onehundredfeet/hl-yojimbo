@@ -56,6 +56,7 @@ class SecureServer {
     
             server.advanceTime( time );
     
+
             if ( !server.isRunning() )
                 break;
     

@@ -21,9 +21,25 @@ interface Allocator  {
     [Internal="yojimbo::GetDefaultAllocator", Static, Ref, Const]  Allocator getDefault();
 };
 
+enum HLEventType{
+    "HLYOJIMBO_INVALID",
+    "HLYOJIMBO_CLIENT_CONNECT",
+    "HLYOJIMBO_CLIENT_DISCONNECT"
+};
+
+[NoDelete, Internal="HLMessage"]
+interface Message {
+    
+};
+
 [Internal="HashlinkAdapter"]
 interface Adapter  {
     void Adapter(  );
+
+    int IncomingEventCount();
+    bool Dequeue(); // returns true if a message was dequeued, false if queue was empty
+    HLEventType GetEventType();
+    int GetClientIndex();
 };
 
 [Internal="yojimbo::Server"]
@@ -37,6 +53,12 @@ interface Server  {
     [Internal="ReceivePackets"]   void receivePackets();
     [Internal="AdvanceTime"]   void advanceTime(double time);
     [Internal="IsRunning"] bool isRunning();
+    [Internal="ReceiveMessage", Const, Cast="HLMessage*"] Message receiveMessage(int client, int channel);
+    [Internal="ReleaseMessage"] void releaseMessage(int client, Message msg);
+    [Internal="CreateMessage", Const, Cast="HLMessage*"] Message createMessage(int client, [Substitute="0"] int kind);
+    [Internal="CanSendMessage" ] bool canSendMessage(int client, int channel);
+    [Internal="HasMessagesToSend" ] bool hasMessagesToSend(int client, int channel);
+    [Internal="SendMessage"] void sendMessage(int client, int channel, Message msg);
 
 };
 
