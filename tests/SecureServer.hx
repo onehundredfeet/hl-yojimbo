@@ -1,9 +1,11 @@
 
 package;
 
+import haxe.ds.GenericStack.GenericCell;
 import hl.Gc;
 import yojimbo.Native;
 import haxe.io.UInt8Array;
+using SecureCommon;
 
 class SecureServer {
 
@@ -15,9 +17,6 @@ class SecureServer {
     static var privateKey:haxe.io.Bytes = UInt8Array.fromArray(privateKeyArrayInt).view.buffer;
 
     // should be an int64
-    static final  ProtocolId = 0x11223344; //.make(,0x556677);
-    static final ClientPort = 30000;
-    static final ServerPort = 40000;
     static final MaxClients = 10;
 
     static function serverMain() : Int {
@@ -25,10 +24,10 @@ class SecureServer {
     }
 
     static function hostServer( allocator : Allocator) {
-        var config = new ClientServerConfig();
-        config.protocolId = ProtocolId;
+        
 
-        var address = new Address( "127.0.0.1", ServerPort );
+        var config = SecureCommon.getConfig();
+        var address = new Address( "127.0.0.1", SecureCommon.ServerPort );
         var time = 100.0;
         
         var adapter = new Adapter();

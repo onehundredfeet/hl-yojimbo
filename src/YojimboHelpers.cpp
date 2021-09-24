@@ -60,3 +60,9 @@ vbyte *HxGetConnectToken(yojimbo::Matcher *matcher, int *length) {
     
     return hl_copy_bytes(buffer, yojimbo::ConnectTokenBytes);
 }
+
+void hlyojimbo_add_channel( yojimbo::ConnectionConfig *connection, yojimbo::ChannelConfig *config ) {
+    if (connection->numChannels < yojimbo::MaxChannels) {
+        connection->channel[ connection->numChannels++ ] = *config;
+    }
+}

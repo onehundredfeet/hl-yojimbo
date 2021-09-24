@@ -6,6 +6,30 @@
 
 };
 
+enum ChannelType {
+    "CHANNEL_TYPE_RELIABLE_ORDERED",                              ///< Messages are received reliably and in the same order they were sent. 
+    "CHANNEL_TYPE_UNRELIABLE_UNORDERED"                           ///< Messages are sent unreliably. Messages may arrive out of order, or not at all.
+};
+
+
+interface ChannelConfig
+{
+    void ChannelConfig();
+    attribute ChannelType type;                                           ///< Channel type: reliable-ordered or unreliable-unordered.
+    attribute bool disableBlocks;                                         ///< Disables blocks being sent across this channel.
+    attribute int sentPacketBufferSize;                                   ///< Number of packet entries in the sent packet sequence buffer. Please consider your packet send rate and make sure you have at least a few seconds worth of entries in this buffer.
+    attribute int messageSendQueueSize;                                   ///< Number of messages in the send queue for this channel.
+    attribute int messageReceiveQueueSize;                                ///< Number of messages in the receive queue for this channel.
+    attribute int maxMessagesPerPacket;                                   ///< Maximum number of messages to include in each packet. Will write up to this many messages, provided the messages fit into the channel packet budget and the number of bytes remaining in the packet.
+    attribute int packetBudget;                                           ///< Maximum amount of message data to write to the packet for this channel (bytes). Specifying -1 means the channel can use up to the rest of the bytes remaining in the packet.
+    attribute int maxBlockSize;                                           ///< The size of the largest block that can be sent across this channel (bytes).
+    attribute int blockFragmentSize;                                      ///< Blocks are split up into fragments of this size (bytes). Reliable-ordered channel only.
+    attribute float messageResendTime;                                    ///< Minimum delay between message resends (seconds). Avoids sending the same message too frequently. Reliable-ordered channel only.
+    attribute float blockFragmentResendTime;                              ///< Minimum delay between block fragment resends (seconds). Avoids sending the same fragment too frequently. Reliable-ordered channel only.
+
+
+    [Internal="GetMaxFragmentsPerBlock"] int getMaxFragmentsPerBlock();
+};
 
 //        Server server( GetDefaultAllocator(), privateKey, Address( "127.0.0.1", ServerPort ), config, adapter, time );
 
@@ -42,6 +66,18 @@ interface Adapter  {
     int GetClientIndex();
 };
 
+
+interface NetworkInfo {
+    attribute float RTT;                                  ///< Round trip time estimate (milliseconds).
+    attribute float packetLoss;                           ///< Packet loss percent.
+    attribute float sentBandwidth;                        ///< Sent bandwidth (kbps).
+    attribute float receivedBandwidth;                    ///< Received bandwidth (kbps).
+    attribute float ackedBandwidth;                       ///< Acked bandwidth (kbps).
+    attribute int numPacketsSent;                    ///< Number of packets sent. Actually 64bits :(
+    attribute int numPacketsReceived;                ///< Number of packets received. Actually 64bits :(
+    attribute int numPacketsAcked;                   ///< Number of packets acked. Actually 64bits :(
+};
+
 [Internal="yojimbo::Server"]
 interface Server  {
     void Server( [Ref] Allocator allocator, bytes privateKey, [Ref] Address address, [Ref] ClientServerConfig config, [Ref] Adapter adapter, double time );
@@ -66,6 +102,12 @@ interface Server  {
 interface ClientServerConfig 
 {
     void ClientServerConfig();
+
+    // inherited from connection config
+    attribute int numChannels;                                        ///< Number of message channels in [1,MaxChannels]. Each message channel must have a corresponding configuration below.
+    attribute int maxPacketSize;                                      ///< The maximum size of packets generated to transmit messages between client and server (bytes).
+
+    [CObject, Internal="hlyojimbo_add_channel"] void addChannel(ChannelConfig channel);
 
     //actually an int64
     attribute int protocolId;                                    ///< Clients can only connect to servers with the same protocol id. Use this for versioning.

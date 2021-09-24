@@ -8,9 +8,6 @@ import hl.Gc;
 import yojimbo.Native;
 
 class SecureClient {
-    static final  ProtocolId = 0x11223344; //.make(,0x556677);
-    static final ClientPort = 30000;
-    static final ServerPort = 40000;
 
     static final cert_file = "server.pem";
 
@@ -54,7 +51,7 @@ class SecureClient {
 
         var clientId =  (Sys.args().length > 0) ? Std.parseInt(Sys.args()[0]) : 12345;
 
-        matcher.requestMatch( "localhost", 443, ProtocolId, clientId, false );
+        matcher.requestMatch( "localhost", 443, SecureCommon.ProtocolId, clientId, false );
     
         if ( matcher.getMatchStatus() == MatchStatus.MATCH_FAILED )
         {
@@ -76,19 +73,18 @@ class SecureClient {
 
         final time = 100.0;
     
-        var config = new ClientServerConfig();
-        config.protocolId = ProtocolId;
+        var config = SecureCommon.getConfig();
 
 
         var adapter = new Adapter();
 
-        var address = new Address("0.0.0.0", ClientPort);
+        var address = new Address("0.0.0.0", SecureCommon.ClientPort);
 
         var client = new Client(allocator, address, config, adapter, time);
 
-        var serverAddress = new Address( "127.0.0.1", ServerPort );
+        var serverAddress = new Address( "127.0.0.1", SecureCommon.ServerPort );
         
-        trace ("Connecting to  " + serverAddress.toString());
+        trace ("Connecting to (doesn't matter - secure connections get it from the connect token) " + serverAddress.toString());
 
         client.connect( clientId, connectToken );
 

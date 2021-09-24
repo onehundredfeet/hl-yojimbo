@@ -169,4 +169,7 @@ public:
     }
 };
 
+
+void hlyojimbo_add_channel( yojimbo::ConnectionConfig *connection, yojimbo::ChannelConfig *config );
+
 #endif
