@@ -5,3 +5,9 @@ src/yojimbo.cpp
 bin/test.hl
 bin/server.hl
 bin/client.hl
+matcher/matcher
+matcher/server.key
+matcher/server.pem
+server.pem
+server.key
+key.pem
