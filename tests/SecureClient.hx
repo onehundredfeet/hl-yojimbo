@@ -88,10 +88,8 @@ class SecureClient {
 	function clientFrame(dt : Float) : Bool{
         _time += dt;
 
-        if (_client == null) {
-            throw "What?";
-        }
-        _client.sendPackets();
+
+
 
         _client.receivePackets();
 
@@ -108,13 +106,14 @@ class SecureClient {
         }
 
 
-        while (_adapter.Dequeue()) {
-            switch(_adapter.GetEventType()) {
+        while (_adapter.dequeue()) {
+            switch(_adapter.getEventType()) {
                 case HLEventType.HLYOJIMBO_CLIENT_CONNECT: 
                     trace("Connected!!!!!!!!!!");
                 case HLEventType.HLYOJIMBO_CLIENT_DISCONNECT: 
                     trace("Disconnected!");
                 default:
+					trace("HUH????????? UNKNOWN EVENT!");
             }
         }
         if (_client.isConnected()) {
@@ -131,6 +130,20 @@ class SecureClient {
         }
         return true;
 		
+	}
+
+	function flush() {
+		_client.sendPackets();
+	}
+	function sendTest() {
+		var m = _client.createMessage(0);
+
+		if (m == null) {
+			throw "message is broken";
+		}
+
+		trace ("Sending...");
+		_client.sendMessage(0, m);
 	}
 
     function disconnect() {
@@ -150,14 +163,26 @@ class SecureClient {
         Yojimbo.logLevel(LogLevel.YOJIMBO_LOG_LEVEL_INFO);
 
 		final deltaTime = 0.1;
+		final MESSAGE_PERIOD = 1.;
 
         var ccToken = c.getMatch();
 
         c.initiateConnection(ccToken);
 
+		var time = 0.0;
 
         while (true) {
             if (!c.clientFrame(deltaTime)) break;
+
+			if (time > MESSAGE_PERIOD) {
+				time = 0.;
+				c.sendTest();
+			}
+
+			c.flush();
+
+
+			time += deltaTime;
 
             Yojimbo.sleep(deltaTime);
         }

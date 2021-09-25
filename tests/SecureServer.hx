@@ -27,7 +27,7 @@ class SecureServer {
 
 
     function frameUpdate(server : Server, adapter : Adapter, time : Float) {
-        server.sendPackets();
+        
     
         server.receivePackets();
 
@@ -36,13 +36,17 @@ class SecureServer {
         if ( !server.isRunning() )
             return;
 
-        if (adapter.Dequeue()) {
-            if (adapter.GetEventType() == HLEventType.HLYOJIMBO_CLIENT_CONNECT) {
-                trace("Client conected " + adapter.GetClientIndex());
-                clients.push(adapter.GetClientIndex());
-            } else if (adapter.GetEventType() == HLEventType.HLYOJIMBO_CLIENT_DISCONNECT) {
-                trace("Client disconected " + adapter.GetClientIndex());
-                clients.remove(adapter.GetClientIndex());
+        if (adapter.dequeue()) { 
+            trace("Remaining " + adapter.incomingEventCount());
+
+            if (adapter.getEventType() == HLEventType.HLYOJIMBO_CLIENT_CONNECT) {
+                trace("Client conected " + adapter.getClientIndex());
+                clients.push(adapter.getClientIndex());
+            } else if (adapter.getEventType() == HLEventType.HLYOJIMBO_CLIENT_DISCONNECT) {
+                trace("Client disconected " + adapter.getClientIndex());
+                clients.remove(adapter.getClientIndex());
+            } else {
+                trace("Unknown event " + adapter.getEventType());
             }
         }
 
@@ -55,10 +59,11 @@ class SecureServer {
 
                 server.releaseMessage(c,m);
             }
-            trace ("done");
         }
 
     }
+
+    var _server : Server;
 
     function hostServer( allocator : Allocator) {
         var config = SecureCommon.getConfig();
@@ -67,27 +72,49 @@ class SecureServer {
         
         var adapter = new Adapter();
 
-        var server = new Server( allocator, privateKey, address, config, adapter, time );
+        _server = new Server( allocator, privateKey, address, config, adapter, time );
         
         Yojimbo.logLevel(LogLevel.YOJIMBO_LOG_LEVEL_INFO);
 
-        server.start( MaxClients );
+        _server.start( MaxClients );
 
         final deltaTime = 0.1;
-    
-        var x :String = server.getAddress().toString();
+        final BROADCAST_PERIOD = 3.;
+
+        var x :String = _server.getAddress().toString();
         trace(x);
         trace( "server address is " + x );
     
+        var broadcast = 0.;
+
         while ( true )
         {
-            frameUpdate(server, adapter, time);
+            frameUpdate(_server, adapter, time);
+
+            broadcast += deltaTime;
+
+            if (broadcast > BROADCAST_PERIOD) {
+                broadcast = 0.;
+                sendBroadcast();
+            }
+            _server.sendPackets();
+
             Yojimbo.sleep( deltaTime );
             time += deltaTime;
         }
 
 
-        server.stop();
+        _server.stop();
+    }
+
+    function sendBroadcast() {
+        trace ("Broadcasting");
+
+        for(c in clients) {
+            var m = _server.createMessage(c);
+            _server.sendMessage(c, 0, m);
+        }
+
     }
     public static function main()  {
         // SUPER SKETCHY

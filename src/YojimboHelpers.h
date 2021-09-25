@@ -17,7 +17,7 @@ enum EHashlinkMessage {
     HLMESSAGE_DATA
 };
 
-struct HLMessage : public yojimbo::BlockMessage
+struct HLMessage : public yojimbo::Message
 {
     uint16_t sequence;
 
@@ -90,6 +90,11 @@ struct HLEvent
         clientID = cid;
     }
 
+    HLEvent( const HLEvent &h ){
+        type = h.type;
+        clientID = h.clientID;
+        message = h.message;
+    }
     HLEventType type;
     int clientID;
     HLMessage *message;
@@ -112,39 +117,41 @@ public:
     {
     }
 
-    int IncomingEventCount()
+    int incomingEventCount()
     {
         return _events.size();
     }
 
-    HLEventType GetEventType()
+    HLEventType getEventType()
     {
         if (!_valid)
             return HLYOJIMBO_INVALID;
+
         return current.type;
     }
 
-    int GetClientIndex()
+    int getClientIndex()
     {
         if (!_valid)
             return -1;
         return current.clientID;
     }
 
-    HLMessage *GetMessage()
+    HLMessage *getMessage()
     {
         if (!_valid)
             return nullptr;
         return current.message;
     }
 
-    bool Dequeue()
+    bool dequeue()
     {
         if (_events.empty())
         {
             _valid = false;
             return false;
         }
+        _valid = true;
         current = _events.front();
         _events.pop();
         return true;
@@ -152,14 +159,11 @@ public:
 
     virtual void OnServerClientConnected(int clientIndex)
     {
-        printf("Adapter: Client connected %d\n", clientIndex);
-
         _events.push(HLEvent(HLYOJIMBO_CLIENT_CONNECT, clientIndex));
     }
 
     virtual void OnServerClientDisconnected(int clientIndex)
     {
-        printf("Adapter: Client disconnected %d\n", clientIndex);
         _events.push(HLEvent(HLYOJIMBO_CLIENT_DISCONNECT, clientIndex));
     }
 

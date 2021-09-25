@@ -30,8 +30,7 @@ HL_PRIM vbyte* hl_utf8_to_utf16( vbyte *str, int pos, int *size ) {
 
 
 static vdynamic * utf8_to_dynamic( const char *str) {
-int strLen = (int)strlen( str );
-    printf("Address is %s,%d\n", str, strLen);
+    int strLen = (int)strlen( str );
 
     uchar * ubuf = (uchar*)hl_gc_alloc_noptr((strLen + 1) << 1);
     hl_from_utf8( ubuf, strLen, str );
@@ -55,8 +54,6 @@ vbyte *HxGetConnectToken(yojimbo::Matcher *matcher, int *length) {
     matcher->GetConnectToken(buffer);
 
     *length = yojimbo::ConnectTokenBytes;
-
-    printf("Connection token length %p : %d\n", length, *length);
     
     return hl_copy_bytes(buffer, yojimbo::ConnectTokenBytes);
 }

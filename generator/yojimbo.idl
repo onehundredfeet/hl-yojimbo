@@ -60,10 +60,10 @@ interface Message {
 interface Adapter  {
     void Adapter(  );
 
-    int IncomingEventCount();
-    bool Dequeue(); // returns true if a message was dequeued, false if queue was empty
-    HLEventType GetEventType();
-    int GetClientIndex();
+    int incomingEventCount();
+    bool dequeue(); // returns true if a message was dequeued, false if queue was empty
+    HLEventType getEventType();
+    int getClientIndex();
 };
 
 
