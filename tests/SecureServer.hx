@@ -69,7 +69,7 @@ class SecureServer {
 
         var server = new Server( allocator, privateKey, address, config, adapter, time );
         
-        Yojimbo.logLevel(LogLevel.YOJIMBO_LOG_LEVEL_DEBUG);
+        Yojimbo.logLevel(LogLevel.YOJIMBO_LOG_LEVEL_INFO);
 
         server.start( MaxClients );
 
@@ -101,7 +101,7 @@ class SecureServer {
   
         var secureServer = new SecureServer();
 
-        Yojimbo.logLevel(LogLevel.YOJIMBO_LOG_LEVEL_DEBUG);
+        Yojimbo.logLevel(LogLevel.YOJIMBO_LOG_LEVEL_INFO);
 
         secureServer.hostServer(allocator);
 

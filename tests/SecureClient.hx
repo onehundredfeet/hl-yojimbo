@@ -84,6 +84,7 @@ class SecureClient {
 		trace("Client address is " + clientAddress);
 	}
 
+	var _connected = false;
 	function clientFrame(dt : Float) : Bool{
         _time += dt;
 
@@ -117,13 +118,16 @@ class SecureClient {
             }
         }
         if (_client.isConnected()) {
+			if (!_connected) {
+				trace("WHEEEEE");
+				_connected = true;
+			}
             var m : Message = _client.receiveMessage(0);
             while (m != null) {
                 trace("Received message M: " + m);
                 _client.releaseMessage(m);
                 m = _client.receiveMessage(0);
             }   
-            trace("Done"); 
         }
         return true;
 		
@@ -143,7 +147,7 @@ class SecureClient {
 		var c = new SecureClient();
 		c.initialize(allocator);
         
-        Yojimbo.logLevel(LogLevel.YOJIMBO_LOG_LEVEL_DEBUG);
+        Yojimbo.logLevel(LogLevel.YOJIMBO_LOG_LEVEL_INFO);
 
 		final deltaTime = 0.1;
 
