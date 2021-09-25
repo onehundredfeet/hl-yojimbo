@@ -9,6 +9,10 @@ using SecureCommon;
 
 class SecureServer {
 
+    function new() {
+
+    }
+
     static var privateKeyArrayInt : Array<Int> = [ 0x60, 0x6a, 0xbe, 0x6e, 0xc9, 0x19, 0x10, 0xea, 
         0x9a, 0x65, 0x62, 0xf6, 0x6f, 0x2b, 0x30, 0xe4, 
         0x43, 0x71, 0xd6, 0x2c, 0xd1, 0x99, 0x27, 0x26,
@@ -19,13 +23,41 @@ class SecureServer {
     // should be an int64
     static final MaxClients = 10;
 
-    static function serverMain() : Int {
-        return 0;
+    var clients : Array<Int> = [];
+
+
+    function frameUpdate(server : Server, adapter : Adapter, time : Float) {
+        server.sendPackets();
+    
+        server.receivePackets();
+
+        server.advanceTime( time );
+
+        if ( !server.isRunning() )
+            return;
+
+        if (adapter.Dequeue()) {
+            if (adapter.GetEventType() == HLEventType.HLYOJIMBO_CLIENT_CONNECT) {
+                trace("Client conected " + adapter.GetClientIndex());
+                clients.push(adapter.GetClientIndex());
+            } else if (adapter.GetEventType() == HLEventType.HLYOJIMBO_CLIENT_DISCONNECT) {
+                trace("Client disconected " + adapter.GetClientIndex());
+                clients.remove(adapter.GetClientIndex());
+            }
+        }
+
+        for(c in clients) {
+            
+            var m : Message = null;
+
+            while ((m = server.receiveMessage(c, 0)) != null) {
+                trace("message  " );
+            }
+        }
+
     }
 
-    static function hostServer( allocator : Allocator) {
-        
-
+    function hostServer( allocator : Allocator) {
         var config = SecureCommon.getConfig();
         var address = new Address( "127.0.0.1", SecureCommon.ServerPort );
         var time = 100.0;
@@ -38,28 +70,15 @@ class SecureServer {
 
         final deltaTime = 0.1;
     
-
         var x :String = server.getAddress().toString();
         trace(x);
         trace( "server address is " + x );
-
-        //srand( (unsigned int) time( NULL ) );
     
         while ( true )
         {
-            server.sendPackets();
-    
-            server.receivePackets();
-    
-            time += deltaTime;
-    
-            server.advanceTime( time );
-    
-
-            if ( !server.isRunning() )
-                break;
-    
+            frameUpdate(server, adapter, time);
             Yojimbo.sleep( deltaTime );
+            time += deltaTime;
         }
 
 
@@ -71,11 +90,13 @@ class SecureServer {
 
         Yojimbo.initialize();
 
-        Yojimbo.logLevel(LogLevel.YOJIMBO_LOG_LEVEL_DEBUG);
+        Yojimbo.logLevel(LogLevel.YOJIMBO_LOG_LEVEL_INFO);
 
         var allocator = Allocator.getDefault();
   
-        hostServer(allocator);
+        var secureServer = new SecureServer();
+
+        secureServer.hostServer(allocator);
 
         Gc.major();
 

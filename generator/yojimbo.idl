@@ -138,6 +138,17 @@ interface Client {
     [Internal="ReceivePackets"]   void receivePackets();
     [Internal="AdvanceTime"]   void advanceTime(double time);
     [Internal="ConnectionFailed"] bool hasConnectionFailed();
+    [Internal="CreateMessage", Const, Cast="HLMessage*"] Message createMessage(int type);
+    [Internal="CanSendMessage"] bool canSendMessage(int channelIndex);
+    [Internal="HasMessagesToSend"] bool hasMessagesToSend(int channelIndex);
+    [Internal="SendMessage"] void sendMessage(int channelIndex, Message message);
+    [Internal="ReceiveMessage", Const, Cast="HLMessage*"] Message receiveMessage(int channelIndex);
+    [Internal="ReleaseMessage"] void releaseMessage(Message message );
+    [Internal="GetNetworkInfo"] void getNetworkInfo( [Ref] NetworkInfo info );
+
+//        uint8_t * AllocateBlock( int bytes );
+  //      void AttachBlockToMessage( Message * message, uint8_t * block, int bytes );
+    //    void FreeBlock( uint8_t * block );
 
 
 };
