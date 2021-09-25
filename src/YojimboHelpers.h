@@ -152,14 +152,14 @@ public:
 
     virtual void OnServerClientConnected(int clientIndex)
     {
-        printf("Client connected %d\n", clientIndex);
+        printf("Adapter: Client connected %d\n", clientIndex);
 
         _events.push(HLEvent(HLYOJIMBO_CLIENT_CONNECT, clientIndex));
     }
 
     virtual void OnServerClientDisconnected(int clientIndex)
     {
-        printf("Client disconnected %d\n", clientIndex);
+        printf("Adapter: Client disconnected %d\n", clientIndex);
         _events.push(HLEvent(HLYOJIMBO_CLIENT_DISCONNECT, clientIndex));
     }
 

@@ -8,10 +8,7 @@ static  hl_type *strType = nullptr;
 
 void hl_cache_string_type( vstring *str) {
    strType = str->t;
-
-    
-
-   printf("SYSTEM PREAMBLE -- NEEX TO REMOVE THIS HACK: string type is %s, kind %d\n", hl_to_utf8(hl_type_str(str->t)), str->t->kind);
+   printf("SYSTEM PREAMBLE -- NEEX TO REMOVE THIS HACK\n");
 }
 
 vstring * hl_utf8_to_hlstr( const char *str) {

@@ -52,7 +52,10 @@ class SecureServer {
 
             while ((m = server.receiveMessage(c, 0)) != null) {
                 trace("message  " );
+
+                server.releaseMessage(c,m);
             }
+            trace ("done");
         }
 
     }
@@ -66,6 +69,8 @@ class SecureServer {
 
         var server = new Server( allocator, privateKey, address, config, adapter, time );
         
+        Yojimbo.logLevel(LogLevel.YOJIMBO_LOG_LEVEL_DEBUG);
+
         server.start( MaxClients );
 
         final deltaTime = 0.1;
@@ -90,11 +95,13 @@ class SecureServer {
 
         Yojimbo.initialize();
 
-        Yojimbo.logLevel(LogLevel.YOJIMBO_LOG_LEVEL_INFO);
+        
 
         var allocator = Allocator.getDefault();
   
         var secureServer = new SecureServer();
+
+        Yojimbo.logLevel(LogLevel.YOJIMBO_LOG_LEVEL_DEBUG);
 
         secureServer.hostServer(allocator);
 
