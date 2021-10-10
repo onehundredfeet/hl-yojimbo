@@ -6,14 +6,15 @@
 #include <yojimbo/yojimbo.h>
 #include <hl.h>
 #include <queue>
-
+#include "BufferPool.hpp"
 void cacheStringType(vstring *str);
 
 vstring *addressToString(const yojimbo::Address *address);
 vdynamic *addressToDynamic(const yojimbo::Address *address);
 vbyte *HxGetConnectToken(yojimbo::Matcher *matcher, int *oLength);
 
-enum EHashlinkMessage {
+enum EHashlinkMessage
+{
     HLMESSAGE_DATA
 };
 
@@ -21,25 +22,97 @@ struct HLMessage : public yojimbo::Message
 {
     uint16_t sequence;
 
+    static BufferPool _pool;
+
+    BufferPool::Buffer _buffer;
+
     HLMessage()
     {
         sequence = 0;
     }
 
-    virtual ~HLMessage() {
-        
+    virtual ~HLMessage()
+    {
+        Dispose();
     }
-    template <typename Stream> bool Serialize( Stream & stream )
-    {        
-        serialize_bits( stream, sequence, 16 );
+
+    void Dispose()
+    {
+        if (_buffer.state != BufferPool::Buffer::BUFFER_UNINITIALIZED)
+        {
+            _pool.Return(_buffer);
+            _buffer.state = BufferPool::Buffer::BUFFER_UNINITIALIZED;
+        }
+    }
+    const int MAX_PAYLOAD = 1023;
+    const int PAYLOAD_LENGTH_BITS = 10;
+
+    bool SetPayload(unsigned char *data, int size)
+    {
+        Dispose();
+
+        if (size > MAX_PAYLOAD)
+        {
+            return false;
+        }
+        _buffer = _pool.Rent(size);
+
+        memcpy(_buffer.data, data, size);
         return true;
     }
 
-    YOJIMBO_VIRTUAL_SERIALIZE_FUNCTIONS();
+    unsigned char *AccessPayload( int *size ) {
+        *size = _buffer.requestedSize;
+        return (unsigned char *)_buffer.data;
+    }
+
+    virtual bool SerializeInternal(class yojimbo::ReadStream &stream)
+    {
+        
+        uint32_t size = -1;
+        if (stream.SerializeBits(size, PAYLOAD_LENGTH_BITS))
+        {
+            Dispose();
+            _buffer = _pool.Rent(size);
+            if (stream.SerializeBytes((unsigned char *)_buffer.data, size))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    virtual bool SerializeInternal(class yojimbo::WriteStream &stream)
+    {
+        if (_buffer.state != BufferPool::Buffer::BUFFER_ALLOCATED) {
+            return false;
+        }
+        if (stream.SerializeBits(_buffer.requestedSize, PAYLOAD_LENGTH_BITS))
+        {
+            if (stream.SerializeBytes((unsigned char *)_buffer.data, _buffer.requestedSize))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    virtual bool SerializeInternal(class yojimbo::MeasureStream &stream)
+    {
+        if (_buffer.state != BufferPool::Buffer::BUFFER_ALLOCATED) {
+            return false;
+        }
+        if (stream.SerializeBits(_buffer.requestedSize, PAYLOAD_LENGTH_BITS))
+        {
+            if (stream.SerializeBytes((unsigned char *)_buffer.data, _buffer.requestedSize))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
 };
-
-
-
 
 class HashlinkMessageFactory : public yojimbo::MessageFactory
 {
@@ -62,14 +135,13 @@ public:
                 return NULL;
             SetMessageType(message, HLMESSAGE_DATA);
             return message;
-            default:
-                return nullptr;
+        default:
+            return nullptr;
         }
     }
 
 protected:
 };
-
 
 enum HLEventType
 {
@@ -90,7 +162,8 @@ struct HLEvent
         clientID = cid;
     }
 
-    HLEvent( const HLEvent &h ){
+    HLEvent(const HLEvent &h)
+    {
         type = h.type;
         clientID = h.clientID;
         message = h.message;
@@ -173,7 +246,6 @@ public:
     }
 };
 
-
-void hlyojimbo_add_channel( yojimbo::ConnectionConfig *connection, yojimbo::ChannelConfig *config );
+void hlyojimbo_add_channel(yojimbo::ConnectionConfig *connection, yojimbo::ChannelConfig *config);
 
 #endif

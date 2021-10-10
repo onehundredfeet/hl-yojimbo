@@ -53,6 +53,9 @@ enum HLEventType{
 
 [NoDelete, Internal="HLMessage"]
 interface Message {
+    [Internal = "SetPayload"] bool setPayload( byte *data, int size);
+    [Internal = "AccessPayload"] byte *accessPayload( [Out] int size );
+
     
 };
 

@@ -63,3 +63,5 @@ void hlyojimbo_add_channel( yojimbo::ConnectionConfig *connection, yojimbo::Chan
         connection->channel[ connection->numChannels++ ] = *config;
     }
 }
+
+BufferPool HLMessage::_pool;

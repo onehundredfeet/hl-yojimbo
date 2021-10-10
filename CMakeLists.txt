@@ -1,6 +1,36 @@
 cmake_minimum_required(VERSION 3.10)
 project(yojimbo)
 
+
+
+if (NOT YOJIMBO_ROOT) 
+set(YOJIMBO_ROOT "ext/yojimbo")
+endif()
+
+if (NOT YOJIMBO_SRC_DIR) 
+set(YOJIMBO_SRC_DIR "${YOJIMBO_ROOT}/source/runtime")
+endif()
+
+if (NOT YOJIMBO_INC_DIR) 
+set(YOJIMBO_INC_DIR "${YOJIMBO_ROOT}/include")
+endif()
+
+if (NOT HL_INCLUDE_DIR) 
+    set(HL_INCLUDE_DIR "/usr/local/include")
+endif()
+
+if (NOT HL_LIB_DIR) 
+    set(HL_LIB_DIR "/usr/local/lib")
+endif()
+
+if (NOT COMMON_LIB_DIR) 
+    set(COMMON_LIB_DIR "/usr/local/lib")
+endif()
+
+if (NOT HDLL_DESTINATION) 
+    set(HDLL_DESTINATION "/usr/local/lib")
+endif()
+
 add_library(yojimbo.hdll SHARED
 #Input C++ files go here
 ${YOJIMBO_SRC_DIR}/yojimbo.cpp
