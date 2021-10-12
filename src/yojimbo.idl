@@ -99,7 +99,7 @@ interface Server  {
     [Internal="CanSendMessage" ] bool canSendMessage(int client, int channel);
     [Internal="HasMessagesToSend" ] bool hasMessagesToSend(int client, int channel);
     [Internal="SendMessage"] void sendMessage(int client, int channel, Message msg);
-
+    [Internal="GetClientId", Cast="int"] int getClientId(int clientIdx);
 };
 
 [Internal="yojimbo::ClientServerConfig"]
@@ -149,6 +149,7 @@ interface Client {
     [Internal="ReceiveMessage", Const, Cast="HLMessage*"] Message receiveMessage(int channelIndex);
     [Internal="ReleaseMessage"] void releaseMessage(Message message );
     [Internal="GetNetworkInfo"] void getNetworkInfo( [Ref] NetworkInfo info );
+    [Internal="GetClientId", Cast="int"] int getClientId();
 
 //        uint8_t * AllocateBlock( int bytes );
   //      void AttachBlockToMessage( Message * message, uint8_t * block, int bytes );
