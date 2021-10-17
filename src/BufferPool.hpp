@@ -56,8 +56,12 @@ class BufferPool {
             if (closestIdx != _buffers.size()) {
                 auto y = _buffers[closestIdx];
                 _buffers[closestIdx] = x;
+                y.state = Buffer::BUFFER_ALLOCATED;
+                y.requestedSize = size;
                 return y;
             }
+            x.state = Buffer::BUFFER_ALLOCATED;
+            x.requestedSize = size;
             return x;
         } else {
             return Buffer( this, new char[size], size);
