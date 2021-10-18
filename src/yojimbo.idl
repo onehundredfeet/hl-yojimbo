@@ -60,17 +60,6 @@ interface Message {
     
 };
 
-[Internal="HashlinkAdapter"]
-interface Adapter  {
-    void Adapter(  );
-
-    int incomingEventCount();
-    bool dequeue(); // returns true if a message was dequeued, false if queue was empty
-    HLEventType getEventType();
-    int getClientIndex();
-};
-
-
 interface NetworkInfo {
     attribute float RTT;                                  ///< Round trip time estimate (milliseconds).
     attribute float packetLoss;                           ///< Packet loss percent.
@@ -100,6 +89,11 @@ interface Server  {
     [Internal="HasMessagesToSend" ] bool hasMessagesToSend(int client, int channel);
     [Internal="SendMessage"] void sendMessage(int client, int channel, Message msg);
     [Internal="GetClientId", Cast="int"] int getClientId(int clientIdx);
+
+    [Internal="ConnectLoopbackClient"] void connectLoopbackClient( int clientIndex, int clientId, byte * userData );
+    [Internal="DisconnectLoopbackClient"] void disconnectLoopbackClient( int clientIndex );
+    [Internal="IsLoopbackClient"] bool isLoopbackClient( int clientIndex );
+    [Internal="ProcessLoopbackPacket"] void processLoopbackPacket( int clientIndex, byte *packetData, int packetBytes, int packetSequence );
 };
 
 [Internal="yojimbo::ClientServerConfig"]
@@ -151,12 +145,33 @@ interface Client {
     [Internal="GetNetworkInfo"] void getNetworkInfo( [Ref] NetworkInfo info );
     [Internal="GetClientId", Cast="int"] int getClientId();
 
+    [Internal="ConnectLoopback"] void connectLoopback( int clientIndex, int clientId, int maxClients );
+    [Internal="DisconnectLoopback"] void disconnectLoopback();
+    [Internal="IsLoopback"] bool isLoopback();
+    [Internal="ProcessLoopbackPacket"] void processLoopbackPacket( byte * packetData, int packetBytes, int packetSequence );
+
+
 //        uint8_t * AllocateBlock( int bytes );
   //      void AttachBlockToMessage( Message * message, uint8_t * block, int bytes );
     //    void FreeBlock( uint8_t * block );
 
 
 };
+
+[Internal="HashlinkAdapter"]
+interface Adapter  {
+    void Adapter(  );
+
+    int incomingEventCount();
+    bool dequeue(); // returns true if a message was dequeued, false if queue was empty
+    HLEventType getEventType();
+    int getClientIndex();
+
+    [Internal="BindServer"] void bindLoopbackServer( Server s );
+    [Internal="BindClient"] void bindLoopbackClient( Client c );
+
+};
+
 
 enum MatchStatus
 {

@@ -147,7 +147,7 @@ class SecureClient {
 	}
 
     function disconnect() {
-		trace("Disconnecting");
+		trace("hx : Disconnecting");
 		_client.disconnect();
     }
 	public static function main() {
@@ -187,6 +187,7 @@ class SecureClient {
             Yojimbo.sleep(deltaTime);
         }
 
+		trace("Left the loop!");
         c.disconnect();
 
 		trace("Shutting down");

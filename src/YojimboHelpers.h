@@ -49,42 +49,59 @@ struct HLMessage : public yojimbo::Message
 
     bool SetPayload(unsigned char *data, int size)
     {
+        //        printf("Setting payload to %d", size);
         Dispose();
 
         if (size > MAX_PAYLOAD)
         {
+            //          printf("Payload is too big\n");
             return false;
         }
+
         _buffer = _pool.Rent(size);
 
         memcpy(_buffer.data, data, size);
+        //printf("Buffer is rented for %d - status %d\n", size, _buffer.state);
         return true;
     }
 
-    unsigned char *AccessPayload( int *size ) {
+    unsigned char *AccessPayload(int *size)
+    {
         *size = _buffer.requestedSize;
         return (unsigned char *)_buffer.data;
     }
 
     virtual bool SerializeInternal(class yojimbo::ReadStream &stream)
     {
-        
+        //printf("Serializing Read\n");
         uint32_t size = -1;
         if (stream.SerializeBits(size, PAYLOAD_LENGTH_BITS))
         {
             Dispose();
+            //printf("Serializing (Read) %d bytes\n", size);
             _buffer = _pool.Rent(size);
             if (stream.SerializeBytes((unsigned char *)_buffer.data, size))
             {
                 return true;
             }
+            else
+            {
+                //printf("BYTES??\n");
+            }
+        }
+        else
+        {
+            //printf("BITS??\n");
         }
         return false;
     }
 
     virtual bool SerializeInternal(class yojimbo::WriteStream &stream)
     {
-        if (_buffer.state != BufferPool::Buffer::BUFFER_ALLOCATED) {
+        //printf("Serializing Write %d bytes \n", _buffer.requestedSize);
+
+        if (_buffer.state != BufferPool::Buffer::BUFFER_ALLOCATED)
+        {
             return false;
         }
         if (stream.SerializeBits(_buffer.requestedSize, PAYLOAD_LENGTH_BITS))
@@ -99,19 +116,34 @@ struct HLMessage : public yojimbo::Message
 
     virtual bool SerializeInternal(class yojimbo::MeasureStream &stream)
     {
-        if (_buffer.state != BufferPool::Buffer::BUFFER_ALLOCATED) {
+        //printf("Serializing measure\n");
+        if (_buffer.state != BufferPool::Buffer::BUFFER_ALLOCATED)
+        {
+            //  printf("Buffer is unallocted\n");
             return false;
+        }
+        else
+        {
+            //printf("Buffer measuring %d\n", _buffer.requestedSize);
         }
         if (stream.SerializeBits(_buffer.requestedSize, PAYLOAD_LENGTH_BITS))
         {
             if (stream.SerializeBytes((unsigned char *)_buffer.data, _buffer.requestedSize))
             {
+
                 return true;
             }
+            else
+            {
+                //printf("bytes no measure\n");
+            }
+        }
+        else
+        {
+            //            printf("Bits no measure\n");
         }
         return false;
     }
-    
 };
 
 class HashlinkMessageFactory : public yojimbo::MessageFactory
@@ -176,6 +208,10 @@ struct HLEvent
 class HashlinkAdapter : public yojimbo::Adapter
 {
 private:
+
+    yojimbo::Server *_server;
+    yojimbo::Client *_client;
+
     std::queue<HLEvent> _events;
 
     HLEvent current;
@@ -190,6 +226,12 @@ public:
     {
     }
 
+    void BindServer(yojimbo::Server *s ) {
+        _server = s;
+    }
+    void BindClient(yojimbo::Client *c ) {
+        _client = c;
+    }
     int incomingEventCount()
     {
         return _events.size();
@@ -240,8 +282,51 @@ public:
         _events.push(HLEvent(HLYOJIMBO_CLIENT_DISCONNECT, clientIndex));
     }
 
+    /** 
+    Override this callback to process packets sent from client to server over loopback.
+    @param clientIndex The client index in range [0,maxClients-1]
+    @param packetData The packet data (raw) to be sent to the server.
+    @param packetBytes The number of packet bytes in the server.
+    @param packetSequence The sequence number of the packet.
+    @see Client::ConnectLoopback
+    */
+    virtual void ClientSendLoopbackPacket(int clientIndex, const uint8_t *packetData, int packetBytes, uint64_t packetSequence)
+    {
+       printf("Client to server loopback packet %d, %d, %llu\n", clientIndex, packetBytes, packetSequence);
+       if (_server != nullptr) {
+           _server->ProcessLoopbackPacket( clientIndex, packetData, packetBytes, packetSequence );
+       } else {
+           printf("Server loopback is null\n");
+       }
+    }
+
+    /**
+        Override this callback to process packets sent from client to server over loopback.
+        @param clientIndex The client index in range [0,maxClients-1]
+        @param packetData The packet data (raw) to be sent to the server.
+        @param packetBytes The number of packet bytes in the server.
+        @param packetSequence The sequence number of the packet.
+        @see Server::ConnectLoopbackClient
+        */
+
+    virtual void ServerSendLoopbackPacket(int clientIndex, const uint8_t *packetData, int packetBytes, uint64_t packetSequence)
+    {
+        printf("Server to client loopback packet %d, %d, %lld\n", clientIndex, packetBytes, packetSequence);
+
+        if (_client != nullptr) {
+            if (clientIndex == 0) {
+                _client->ProcessLoopbackPacket( packetData, packetBytes, packetSequence );
+            }
+        } else {
+            printf("Client loopback is null\n");
+        }
+
+
+    }
+
     yojimbo::MessageFactory *CreateMessageFactory(yojimbo::Allocator &allocator)
     {
+        //printf("Creating message factory\n");
         return YOJIMBO_NEW(allocator, HashlinkMessageFactory, allocator);
     }
 };
