@@ -111,7 +111,7 @@ class SecureServer {
         trace ("Broadcasting");
 
         for(c in clients) {
-            var m = _server.createMessage(c);
+            var m = _server.createMessage(c,0);
             _server.sendMessage(c, 0, m);
         }
 

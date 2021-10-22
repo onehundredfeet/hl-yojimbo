@@ -123,7 +123,7 @@ class SecureClient {
 			}
             var m : Message = _client.receiveMessage(0);
             while (m != null) {
-                trace("Received message M: " + m);
+                trace('Received message M: ${m.getType()}' + m  );
                 _client.releaseMessage(m);
                 m = _client.receiveMessage(0);
             }   

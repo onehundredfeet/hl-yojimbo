@@ -126,7 +126,7 @@ class SecureLoopbackServer {
         trace ("Broadcasting");
 
         for(c in clients) {
-            var m = _server.createMessage(c);
+            var m = _server.createMessage(c, 0);
             var b = haxe.io.Bytes.ofString("test");
             m.setPayload(b,b.length);
             _server.sendMessage(c, 0, m);

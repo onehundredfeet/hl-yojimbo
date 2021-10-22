@@ -13,11 +13,6 @@ vstring *addressToString(const yojimbo::Address *address);
 vdynamic *addressToDynamic(const yojimbo::Address *address);
 vbyte *HxGetConnectToken(yojimbo::Matcher *matcher, int *oLength);
 
-enum EHashlinkMessage
-{
-    HLMESSAGE_DATA
-};
-
 struct HLMessage : public yojimbo::Message
 {
     uint16_t sequence;
@@ -35,7 +30,7 @@ struct HLMessage : public yojimbo::Message
     {
         Dispose();
     }
-
+    
     void Dispose()
     {
         if (_buffer.state != BufferPool::Buffer::BUFFER_UNINITIALIZED)
@@ -157,19 +152,10 @@ public:
 
     yojimbo::Message *CreateMessageInternal(int type)
     {
-        yojimbo::Message *message;
         yojimbo::Allocator &allocator = GetAllocator();
-        switch (type)
-        {
-        case HLMESSAGE_DATA:
-            message = YOJIMBO_NEW(allocator, HLMessage);
-            if (!message)
-                return NULL;
-            SetMessageType(message, HLMESSAGE_DATA);
-            return message;
-        default:
-            return nullptr;
-        }
+        yojimbo::Message *message = YOJIMBO_NEW(allocator, HLMessage);
+        SetMessageType(message, type);
+        return message;
     }
 
 protected:

@@ -55,6 +55,7 @@ enum HLEventType{
 interface Message {
     [Internal = "SetPayload"] bool setPayload( byte *data, int size);
     [Internal = "AccessPayload"] byte *accessPayload( [Out] int size );
+    [Internal = "GetType"] int getType();
 
     [Internal ="Dispose"] void dispose();
     
@@ -84,7 +85,7 @@ interface Server  {
     [Internal="IsRunning"] bool isRunning();
     [Internal="ReceiveMessage", Const, Cast="HLMessage*"] Message receiveMessage(int client, int channel);
     [Internal="ReleaseMessage"] void releaseMessage(int client, Message msg);
-    [Internal="CreateMessage", Const, Cast="HLMessage*"] Message createMessage(int client, [Substitute="0"] int kind);
+    [Internal="CreateMessage", Const, Cast="HLMessage*"] Message createMessage(int client, int kind);
     [Internal="CanSendMessage" ] bool canSendMessage(int client, int channel);
     [Internal="HasMessagesToSend" ] bool hasMessagesToSend(int client, int channel);
     [Internal="SendMessage"] void sendMessage(int client, int channel, Message msg);
