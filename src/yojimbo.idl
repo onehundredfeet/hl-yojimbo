@@ -201,5 +201,7 @@ interface Yojimbo {
     [Static, Internal="yojimbo_log_level"] void logLevel(LogLevel level);
     [Internal="hl_cache_string_type", Static] void cacheStringType( [HString] String test );
     [Static, Internal="yojimbo_sleep"] void sleep(double time);
+
+    [Static, Internal="yojimbo_time"] double timeSinceStart();
 };
 	
