@@ -65,3 +65,4 @@ void hlyojimbo_add_channel( yojimbo::ConnectionConfig *connection, yojimbo::Chan
 }
 
 BufferPool HLMessage::_pool;
+int HashlinkMessageFactory::NUM_TYPES = 100;

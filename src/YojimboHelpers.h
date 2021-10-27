@@ -144,8 +144,13 @@ struct HLMessage : public yojimbo::Message
 class HashlinkMessageFactory : public yojimbo::MessageFactory
 {
 public:
-    const static int NUM_TYPES = 1;
+    //somewhat arbitrary - no data structures seem to depend on this
+    // modify this before 
+    static int NUM_TYPES;
 
+    static void SetMaxMessageTypes( int max ) {
+        NUM_TYPES = max;
+    }
     HashlinkMessageFactory(yojimbo::Allocator &allocator) : yojimbo::MessageFactory(allocator, NUM_TYPES)
     {
     }
@@ -278,7 +283,7 @@ public:
     */
     virtual void ClientSendLoopbackPacket(int clientIndex, const uint8_t *packetData, int packetBytes, uint64_t packetSequence)
     {
-       printf("Client to server loopback packet %d, %d, %llu\n", clientIndex, packetBytes, packetSequence);
+       //printf("Client to server loopback packet %d, %d, %llu\n", clientIndex, packetBytes, packetSequence);
        if (_server != nullptr) {
            _server->ProcessLoopbackPacket( clientIndex, packetData, packetBytes, packetSequence );
        } else {
@@ -297,7 +302,7 @@ public:
 
     virtual void ServerSendLoopbackPacket(int clientIndex, const uint8_t *packetData, int packetBytes, uint64_t packetSequence)
     {
-        printf("Server to client loopback packet %d, %d, %lld\n", clientIndex, packetBytes, packetSequence);
+        //printf("Server to client loopback packet %d, %d, %lld\n", clientIndex, packetBytes, packetSequence);
 
         if (_client != nullptr) {
             if (clientIndex == 0) {

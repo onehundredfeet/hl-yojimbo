@@ -197,6 +197,7 @@ interface Matcher {
 [NoDelete]
 interface Yojimbo {
     [Static, Internal="InitializeYojimbo"] void initialize();
+    [Static, Internal="HashlinkMessageFactory::SetMaxMessageTypes"] void setMaxMessageTypes(int max);
     [Static, Internal="ShutdownYojimbo"] void shutdown();
     [Static, Internal="yojimbo_log_level"] void logLevel(LogLevel level);
     [Internal="hl_cache_string_type", Static] void cacheStringType( [HString] String test );
