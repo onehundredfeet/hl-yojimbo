@@ -8,11 +8,11 @@ set(YOJIMBO_ROOT "ext/yojimbo")
 endif()
 
 if (NOT YOJIMBO_SRC_DIR) 
-set(YOJIMBO_SRC_DIR "${YOJIMBO_ROOT}/source/runtime")
+set(YOJIMBO_SRC_DIR "${YOJIMBO_ROOT}")
 endif()
 
 if (NOT YOJIMBO_INC_DIR) 
-set(YOJIMBO_INC_DIR "${YOJIMBO_ROOT}/include")
+set(YOJIMBO_INC_DIR "${YOJIMBO_ROOT}/..")
 endif()
 
 if (NOT HL_INCLUDE_DIR) 
