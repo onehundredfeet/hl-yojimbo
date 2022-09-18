@@ -1,14 +1,13 @@
 #include <hl.h>
 
 #include "YojimboHelpers.h"
-#include "hl_string_helpers.h"
 
 
 
-vstring * addressToString( const yojimbo::Address *address) {
+std::string  addressToString( const yojimbo::Address *address) {
     char buffer[256];
     const char *str = address->ToString(buffer, 256);
-    return hl_utf8_to_hlstr(str);
+    return &buffer[0];
 }
 
 

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(yojimbo)
 
-
+set(CMAKE_OSX_ARCHITECTURES "x86_64")
 
 if (NOT YOJIMBO_ROOT) 
 set(YOJIMBO_ROOT "ext/yojimbo")
@@ -14,6 +14,11 @@ endif()
 if (NOT YOJIMBO_INC_DIR) 
 set(YOJIMBO_INC_DIR "${YOJIMBO_ROOT}/..")
 endif()
+
+if (NOT BREW_INCLUDE_DIR) 
+    set(BREW_INCLUDE_DIR "/usr/local/include")
+endif()
+
 
 if (NOT HL_INCLUDE_DIR) 
     set(HL_INCLUDE_DIR "/usr/local/include")
@@ -31,6 +36,14 @@ if (NOT HDLL_DESTINATION)
     set(HDLL_DESTINATION "/usr/local/lib")
 endif()
 
+if (NOT MBEDTLS_INC_DIR)
+    set(MBEDTLS_INC_DIR "/usr/local/Cellar/mbedtls/3.1.0/include")
+endif()
+
+if (NOT MBEDTLS_LIB_DIR)
+    set(MBEDTLS_LIB_DIR "/usr/local/Cellar/mbedtls/3.1.0/lib")
+endif()
+
 add_library(yojimbo.hdll SHARED
 #Input C++ files go here
 ${YOJIMBO_SRC_DIR}/yojimbo.cpp
@@ -39,7 +52,7 @@ ${YOJIMBO_SRC_DIR}/reliable.io/reliable.c
 ${YOJIMBO_SRC_DIR}/tlsf/tlsf.c
 src/yojimbo.cpp
 src/YojimboHelpers.cpp
-src/hl_string_helpers.cpp
+#src/hl_string_helpers.cpp
 )
 
 set_target_properties(yojimbo.hdll
@@ -53,10 +66,12 @@ cmake_policy(SET CMP0015 NEW)
 
 target_include_directories(yojimbo.hdll
 PRIVATE
+${MBEDTLS_INC_DIR}
 ${YOJIMBO_INC_DIR}
 ${YOJIMBO_SRC_DIR}/netcode.io
 ${YOJIMBO_SRC_DIR}/reliable.io
 ${HL_INCLUDE_DIR}
+${BREW_INCLUDE_DIR}
 
 )
 #target_include_directories(yojimbo.hdll BEFORE PRIVATE )
@@ -69,10 +84,8 @@ ${HL_LIB_DIR}
 find_library(LIBHL NAMES hl 
              HINTS ${HL_LIB_DIR} )
 
-find_library(LIBSODIUM NAMES sodium)
-
-find_library(LIBMBEDTLS NAMES mbedtls 
-HINTS /usr/local/lib )
+find_library(LIBSODIUM NAMES sodium  HINTS /usr/local/lib)
+find_library(LIBMBEDTLS NAMES mbedtls HINTS ${MBEDTLS_LIB_DIR} )
 
 find_library(LIBMBEDCRYPTO NAMES mbedcrypto 
              HINTS /usr/local/lib )

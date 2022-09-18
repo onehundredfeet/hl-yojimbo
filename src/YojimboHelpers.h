@@ -7,9 +7,10 @@
 #include <hl.h>
 #include <queue>
 #include "BufferPool.hpp"
+#include <string>
 void cacheStringType(vstring *str);
 
-vstring *addressToString(const yojimbo::Address *address);
+std::string addressToString(const yojimbo::Address *address);
 vdynamic *addressToDynamic(const yojimbo::Address *address);
 vbyte *HxGetConnectToken(yojimbo::Matcher *matcher, int *oLength);
 

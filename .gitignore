@@ -13,3 +13,5 @@ server.key
 key.pem
 .vscode/c_cpp_properties.json
 bin
+build.release
+yojimbo.hdll
