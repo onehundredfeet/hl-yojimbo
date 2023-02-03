@@ -15,3 +15,5 @@ key.pem
 bin
 build.release
 yojimbo.hdll
+src/yojimbo_hl.cpp
+src/yojimbo_jvm.cpp

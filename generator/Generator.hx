@@ -1,4 +1,4 @@
-package yojimbo;
+package ;
 
 #if eval
 class Generator {
@@ -18,9 +18,11 @@ class Generator {
 ";
 
 
-	static var options = { idlFile : "src/yojimbo.idl", nativeLib : "yojimbo", outputDir : "src", includeCode : INCLUDE, autoGC : true };
+	static var options = { idlFile : "src/yojimbo.idl", target:null, packageName : null, nativeLib : "yojimbo", outputDir : "src", includeCode : INCLUDE, autoGC : true };
 
-	public static function generateCpp() {
+	public static function generateCpp(target = webidl.Options.Target.TargetHL) {
+		options.target = target;
+		options.packageName = "yojimbo";
 		webidl.Generate.generateCpp(options);
 	}
 
@@ -37,6 +39,7 @@ class Generator {
 		return sources;
 	}
 
+	/*
 	public static function generateJs() {
 		// ammo.js params
 		var debug = false;
@@ -48,6 +51,6 @@ class Generator {
 		}
 		webidl.Generate.generateJs(options, getFiles(), params);
 	}
-
+	*/
 }
 #end
