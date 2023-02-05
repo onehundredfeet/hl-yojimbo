@@ -3,8 +3,8 @@
 	"url" : "https://github.com/onehundredfeet/hl-yojimbo",
 	"license" : "MIT",
 	"contributors" : ["onehundredfeet"],
-	"description" : "Yojimbo support for Haxe HL/JS.",
-	"version" : "0.1.0",
+	"description" : "Yojimbo support for Haxe HL/Java/JVM. Updated to support hl-idl 2.0",
+	"version" : "0.2.0",
 	"releasenote" : "",
 	"classPath": "src/",
 	"dependencies": { "hl-idl" : "git:https://github.com/onehundredfeet/hl-idl.git"}

@@ -17,6 +17,8 @@ done
 
 
 pushd build/${TARGET}/${ARCH}/${CONFIG}
-ninja install
+${BUILDER} install
 popd
+mkdir -p bin
+cp build/${TARGET}/${ARCH}/${CONFIG}/${PROJECT}.* bin
 

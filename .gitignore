@@ -17,3 +17,8 @@ build.release
 yojimbo.hdll
 src/yojimbo_hl.cpp
 src/yojimbo_jvm.cpp
+src/yojimbo/*.java
+src/idl_hl.cpp
+src/idl_jvm.cpp
+src/yojimbo.java
+src/jvm-idl-helpers.hpp
