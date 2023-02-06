@@ -143,8 +143,13 @@ std::string  addressToString( const yojimbo::Address *address) {
     const char *str = address->ToString(buffer, 256);
     return &buffer[0];
 }
+static void hlyojimbo_add_channel( yojimbo::ConnectionConfig *connection, yojimbo::ChannelConfig *config ) {
+    if (connection->numChannels < yojimbo::MaxChannels) {
+        connection->channel[ connection->numChannels++ ] = *config;
+    }
+}
 
-
+#if IDL_HL
 static vbyte *HxGetConnectToken(yojimbo::Matcher *matcher, int *length) {
 
     unsigned char buffer[yojimbo::ConnectTokenBytes];
@@ -156,12 +161,11 @@ static vbyte *HxGetConnectToken(yojimbo::Matcher *matcher, int *length) {
     return hl_copy_bytes(buffer, yojimbo::ConnectTokenBytes);
 }
 
-static void hlyojimbo_add_channel( yojimbo::ConnectionConfig *connection, yojimbo::ChannelConfig *config ) {
-    if (connection->numChannels < yojimbo::MaxChannels) {
-        connection->channel[ connection->numChannels++ ] = *config;
-    }
-}
-#ifdef IDL_HL
+
+#elif IDL_JVM
+
+#endif
+/*
 void cacheStringType(vstring *str);
 
 HL_PRIM uchar *hl_to_utf16( const char *str ) {
@@ -199,10 +203,9 @@ static vdynamic * addressToDynamic( const yojimbo::Address *address) {
 }
 
 
+*/
 
 
-
-#endif
 
 
 class HashlinkMessageFactory : public yojimbo::MessageFactory
