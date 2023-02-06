@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.10)
 #you need to modify this yourself
 project(yojimbo)
 
+if (NOT PATH_TO_IDL) 
 set(PATH_TO_IDL "../hl-idl")
+endif()
+
 # a bunch of pre-configured options that may or may not be useful
 # it attempts to cover most of what is used for basic libraries
 # you can reference the paths defined here to help make your cmake code more portable
@@ -20,15 +23,6 @@ if (NOT YOJIMBO_INC_DIR)
 set(YOJIMBO_INC_DIR "${YOJIMBO_ROOT}/..")
 endif()
 
-if (NOT MBEDTLS_INC_DIR)
-    set(MBEDTLS_INC_DIR "${CELLAR_ROOT}/mbedtls/3.1.0/include")
-endif()
-
-if (NOT MBEDTLS_LIB_DIR)
-    set(MBEDTLS_LIB_DIR "${CELLAR_ROOT}/mbedtls/3.1.0/lib")
-endif()
-
-
 set( PROJECT_ADDITIONAL_SOURCES 
 ${YOJIMBO_SRC_DIR}/yojimbo.cpp
 ${YOJIMBO_SRC_DIR}/netcode.io/netcode.c
@@ -40,7 +34,6 @@ set (PROJECT_ADDITIONAL_INCLUDES
 ${YOJIMBO_INC_DIR}
 ${YOJIMBO_SRC_DIR}/netcode.io
 ${YOJIMBO_SRC_DIR}/reliable.io
-${MBEDTLS_INC_DIR}
 )
 
 set (PROJECT_ADDITIONAL_LIB_DIRS
@@ -48,15 +41,13 @@ set (PROJECT_ADDITIONAL_LIB_DIRS
 )
 
 find_library(LIBSODIUM NAMES sodium  HINTS ${LOCAL_LIB})
-find_library(LIBMBEDTLS NAMES mbedtls HINTS ${MBEDTLS_LIB_DIR} )
+find_library(LIBMBEDTLS NAMES mbedtls HINTS ${LOCAL_LIB} )
 
 find_library(LIBMBEDCRYPTO NAMES mbedcrypto 
              HINTS ${LOCAL_LIB} )
 find_library(LIBMBEDX509 NAMES mbedx509 
              HINTS ${LOCAL_LIB} )
 
-# Just an example, LOCAL_LIB is defined in the include above, and points to /usr/local typically on unix
-#find_library(LIBSODIUM NAMES sodium  HINTS ${LOCAL_LIB})
              
 set(PROJECT_ADDITIONAL_LIBS
 ${LIBSODIUM}

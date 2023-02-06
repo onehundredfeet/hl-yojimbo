@@ -4,7 +4,9 @@
 #pragma once
 
 #include <yojimbo/yojimbo.h>
+#ifdef IDL_HL
 #include <hl.h>
+#endif
 #include <queue>
 #include "BufferPool.hpp"
 #include <string>
@@ -137,9 +139,8 @@ struct HLMessage : public yojimbo::Message
     }
 };
 
-
+#ifdef IDL_HL
 void cacheStringType(vstring *str);
-
 std::string  addressToString( const yojimbo::Address *address) {
     char buffer[256];
     const char *str = address->ToString(buffer, 256);
@@ -200,6 +201,7 @@ static void hlyojimbo_add_channel( yojimbo::ConnectionConfig *connection, yojimb
 }
 
 
+#endif
 
 
 class HashlinkMessageFactory : public yojimbo::MessageFactory
