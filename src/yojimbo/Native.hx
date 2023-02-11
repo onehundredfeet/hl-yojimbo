@@ -1,8 +1,17 @@
 package yojimbo;
 
-typedef Native = haxe.macro.MacroType<[idl.ModuleHL.build({ idlFile : "yojimbo.idl", packageName: "yojimbo", autoGC : true, nativeLib : "yojimbo" })]>;
+typedef Native = haxe.macro.MacroType<[
+	idl.Module.build({
+		idlFile: "yojimbo.idl",
+        #if hl
+        target : "hl",
 #elseif (java || jvm)
-typedef Native = haxe.macro.MacroType<[idl.ModuleJVM.build({ idlFile : "yojimbo.idl",  packageName: "yojimbo", autoGC : true, nativeLib : "yojimbo" })]>;
+        target : "java",
 #else
 #error "Unsupported target host"
 #end
+		packageName: "yojimbo",
+		autoGC: true,
+		nativeLib: "yojimbo"
+	})
+]>;
